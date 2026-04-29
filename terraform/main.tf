@@ -23,3 +23,17 @@ module "vpc" {
   availability_zones    = var.availability_zones
 }
 
+module "security" {
+  source = "./modules/security"
+
+  vpc_id = module.vpc.vpc_id
+  project_name = var.project_name
+  environment = var.environment
+    cidr_ipv4 = var.cidr_ipv4
+}
+
+module "iam" {
+  source = "./modules/iam"
+  project_name = var.project_name
+  environment = var.environment
+}

@@ -36,3 +36,7 @@ variable "private_subnet_cidrs" {
   type        = list(string)
 }
 
+variable "cidr_ipv4" {
+  description = "The CIDR block for the IP address to allow access"
+  type        = string
+}
