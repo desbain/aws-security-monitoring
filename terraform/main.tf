@@ -49,3 +49,15 @@ module "rds" {
   rds_role_name = module.iam.rds_role_name
     private_subnet_ids = module.vpc.private_subnet_ids
 }
+
+module "ec2" {
+  source = "./modules/ec2"
+  project_name = var.project_name
+  environment = var.environment
+  instance_profile_name = module.iam.instance_profile_name
+  ami_id = var.ami_id
+  public_subnet_ids = module.vpc.public_subnet_ids
+  bastion_host_sg = module.security.bastion_host_sg
+  instance_type = var.instance_type
+  key_name = var.key_name
+}
