@@ -37,3 +37,15 @@ module "iam" {
   project_name = var.project_name
   environment = var.environment
 }
+
+module "rds" {
+  source = "./modules/rds"
+  project_name = var.project_name
+  environment = var.environment
+  db_name = var.db_name
+  db_username = var.db_username
+  db_password = var.db_password
+  rds_sg = module.security.rds_sg
+  rds_role_name = module.iam.rds_role_name
+    private_subnet_ids = module.vpc.private_subnet_ids
+}
