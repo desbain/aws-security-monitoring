@@ -192,7 +192,6 @@ jobs:
           domain_name          = "desbain.com"
           sns_email            = "gewa11281@gmail.com"
           account_id           = "905418310734"
-          ssl_policy           = "ELBSecurityPolicy-2016-08"
           EOF
 
       - name: Terraform Init
