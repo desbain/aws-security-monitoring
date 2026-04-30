@@ -44,7 +44,30 @@ jobs:
 
       - name: Create tfvars file
         working-directory: terraform
-        run: echo "${{ secrets.TF_VARS }}" > dev.tfvars
+        env:
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        run: |
+          cat > dev.tfvars << EOF
+          project_name         = "portfolio"
+          environment          = "dev"
+          aws_region           = "us-east-2"
+          vpc_cidr             = "10.0.0.0/16"
+          public_subnet_cidrs  = ["10.0.1.0/24", "10.0.2.0/24"]
+          private_subnet_cidrs = ["10.0.3.0/24", "10.0.4.0/24"]
+          availability_zones   = ["us-east-2a", "us-east-2b"]
+          cidr_ipv4            = "76.169.33.57/32"
+          db_name              = "portfoliodb"
+          db_username          = "postgres"
+          db_password          = "$DB_PASSWORD"
+          ami_id               = "ami-0c55b159cbfafe1f0"
+          instance_type        = "t3.micro"
+          key_name             = "portfolio-key"
+          certificate_arn      = "arn:aws:acm:us-east-2:905418310734:certificate/ed75b003-a8fe-4034-8b08-63d67298228f"
+          domain_name          = "desbain.com"
+          sns_email            = "gewa11281@gmail.com"
+          account_id           = "905418310734"
+          ssl_policy           = "ELBSecurityPolicy-2016-08"
+          EOF
 
       - name: Terraform Init
         working-directory: terraform
@@ -86,7 +109,30 @@ jobs:
 
       - name: Create tfvars file
         working-directory: terraform
-        run: echo "${{ secrets.TF_VARS }}" > dev.tfvars
+        env:
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        run: |
+          cat > dev.tfvars << EOF
+          project_name         = "portfolio"
+          environment          = "dev"
+          aws_region           = "us-east-2"
+          vpc_cidr             = "10.0.0.0/16"
+          public_subnet_cidrs  = ["10.0.1.0/24", "10.0.2.0/24"]
+          private_subnet_cidrs = ["10.0.3.0/24", "10.0.4.0/24"]
+          availability_zones   = ["us-east-2a", "us-east-2b"]
+          cidr_ipv4            = "76.169.33.57/32"
+          db_name              = "portfoliodb"
+          db_username          = "postgres"
+          db_password          = "$DB_PASSWORD"
+          ami_id               = "ami-0c55b159cbfafe1f0"
+          instance_type        = "t3.micro"
+          key_name             = "portfolio-key"
+          certificate_arn      = "arn:aws:acm:us-east-2:905418310734:certificate/ed75b003-a8fe-4034-8b08-63d67298228f"
+          domain_name          = "desbain.com"
+          sns_email            = "gewa11281@gmail.com"
+          account_id           = "905418310734"
+          ssl_policy           = "ELBSecurityPolicy-2016-08"
+          EOF
 
       - name: Terraform Init
         working-directory: terraform
@@ -124,7 +170,30 @@ jobs:
 
       - name: Create tfvars file
         working-directory: terraform
-        run: echo "${{ secrets.TF_VARS }}" > dev.tfvars
+        env:
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        run: |
+          cat > dev.tfvars << EOF
+          project_name         = "portfolio"
+          environment          = "dev"
+          aws_region           = "us-east-2"
+          vpc_cidr             = "10.0.0.0/16"
+          public_subnet_cidrs  = ["10.0.1.0/24", "10.0.2.0/24"]
+          private_subnet_cidrs = ["10.0.3.0/24", "10.0.4.0/24"]
+          availability_zones   = ["us-east-2a", "us-east-2b"]
+          cidr_ipv4            = "76.169.33.57/32"
+          db_name              = "portfoliodb"
+          db_username          = "postgres"
+          db_password          = "$DB_PASSWORD"
+          ami_id               = "ami-0c55b159cbfafe1f0"
+          instance_type        = "t3.micro"
+          key_name             = "portfolio-key"
+          certificate_arn      = "arn:aws:acm:us-east-2:905418310734:certificate/ed75b003-a8fe-4034-8b08-63d67298228f"
+          domain_name          = "desbain.com"
+          sns_email            = "gewa11281@gmail.com"
+          account_id           = "905418310734"
+          ssl_policy           = "ELBSecurityPolicy-2016-08"
+          EOF
 
       - name: Terraform Init
         working-directory: terraform
