@@ -4,6 +4,10 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 6.0"
     }
+    archive = {
+      source  = "hashicorp/archive"
+      version = "~> 2.0"
+    }
   }
 }
 
@@ -81,4 +85,14 @@ module "dns" {
   domain_name = var.domain_name
   alb_dns_name = module.alb.alb_dns_name
   alb_zone_id = module.alb.alb_zone_id
+}
+
+module "monitoring" {
+  source = "./modules/monitoring"
+
+  project_name = var.project_name
+  environment = var.environment
+  account_id = var.account_id
+  sns_email = var.sns_email
+  region = var.aws_region
 }
