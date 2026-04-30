@@ -37,3 +37,8 @@ variable "ami_id" {
   description = "The AMI ID for the EC2 instance"
   type = string
 }
+
+variable "db_endpoint" {
+  description = "RDS endpoint"
+  type        = string
+}

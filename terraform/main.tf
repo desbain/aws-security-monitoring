@@ -70,6 +70,7 @@ module "ec2" {
   bastion_host_sg       = module.security.bastion_host_sg
   instance_type         = var.instance_type
   key_name              = var.key_name
+   db_endpoint = module.rds.rds_db_endpoint
 }
 
 module "alb" {
