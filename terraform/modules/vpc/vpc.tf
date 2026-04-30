@@ -46,8 +46,7 @@ resource "aws_internet_gateway" "gw" {
 
 #Creating elastic IP for NAT Gateway-------------------------------------------------------------
 resource "aws_eip" "nat" {
-  instance = aws_instance.web.id
-  domain   = "vpc"
+   domain   = "vpc"
 }
 
 # Create a NAT Gateway-------------------------------------------------------------

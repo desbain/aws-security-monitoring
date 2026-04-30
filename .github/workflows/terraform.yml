@@ -1,0 +1,204 @@
+name: Terraform CI/CD
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Select action to run'
+        required: true
+        default: 'plan'
+        type: choice
+        options:
+          - plan
+          - apply
+          - destroy
+
+jobs:
+  # -------------------------------------------------------
+  # JOB 1 - Terraform Plan (runs on PR)
+  # -------------------------------------------------------
+  terraform-plan:
+    name: Terraform Plan
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Create tfvars file
+        working-directory: terraform
+        env:
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        run: |
+          cat > dev.tfvars << EOF
+          project_name         = "portfolio"
+          environment          = "dev"
+          aws_region           = "us-east-2"
+          vpc_cidr             = "10.0.0.0/16"
+          public_subnet_cidrs  = ["10.0.1.0/24", "10.0.2.0/24"]
+          private_subnet_cidrs = ["10.0.3.0/24", "10.0.4.0/24"]
+          availability_zones   = ["us-east-2a", "us-east-2b"]
+          cidr_ipv4            = "76.169.33.57/32"
+          db_name              = "portfoliodb"
+          db_username          = "postgres"
+          db_password          = "$DB_PASSWORD"
+          ami_id               = "ami-0c55b159cbfafe1f0"
+          instance_type        = "t3.micro"
+          key_name             = "portfolio-key"
+          certificate_arn      = "arn:aws:acm:us-east-2:905418310734:certificate/ed75b003-a8fe-4034-8b08-63d67298228f"
+          domain_name          = "desbain.com"
+          sns_email            = "gewa11281@gmail.com"
+          account_id           = "905418310734"
+          ssl_policy           = "ELBSecurityPolicy-2016-08"
+          EOF
+
+      - name: Terraform Init
+        working-directory: terraform
+        run: terraform init
+
+      - name: Terraform Format Check
+        working-directory: terraform
+        run: terraform fmt -check
+
+      - name: Terraform Validate
+        working-directory: terraform
+        run: terraform validate
+
+      - name: Terraform Plan
+        working-directory: terraform
+        run: terraform plan -var-file="dev.tfvars"
+
+  # -------------------------------------------------------
+  # JOB 2 - Terraform Apply (runs on merge to master)
+  # -------------------------------------------------------
+  terraform-apply:
+    name: Terraform Apply
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Create tfvars file
+        working-directory: terraform
+        env:
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        run: |
+          cat > dev.tfvars << EOF
+          project_name         = "portfolio"
+          environment          = "dev"
+          aws_region           = "us-east-2"
+          vpc_cidr             = "10.0.0.0/16"
+          public_subnet_cidrs  = ["10.0.1.0/24", "10.0.2.0/24"]
+          private_subnet_cidrs = ["10.0.3.0/24", "10.0.4.0/24"]
+          availability_zones   = ["us-east-2a", "us-east-2b"]
+          cidr_ipv4            = "76.169.33.57/32"
+          db_name              = "portfoliodb"
+          db_username          = "postgres"
+          db_password          = "$DB_PASSWORD"
+          ami_id               = "ami-0c55b159cbfafe1f0"
+          instance_type        = "t3.micro"
+          key_name             = "portfolio-key"
+          certificate_arn      = "arn:aws:acm:us-east-2:905418310734:certificate/ed75b003-a8fe-4034-8b08-63d67298228f"
+          domain_name          = "desbain.com"
+          sns_email            = "gewa11281@gmail.com"
+          account_id           = "905418310734"
+          ssl_policy           = "ELBSecurityPolicy-2016-08"
+          EOF
+
+      - name: Terraform Init
+        working-directory: terraform
+        run: terraform init
+
+      - name: Terraform Validate
+        working-directory: terraform
+        run: terraform validate
+
+      - name: Terraform Apply
+        working-directory: terraform
+        run: terraform apply -auto-approve -var-file="dev.tfvars"
+
+  # -------------------------------------------------------
+  # JOB 3 - Terraform Destroy (manual trigger only)
+  # -------------------------------------------------------
+  terraform-destroy:
+    name: Terraform Destroy
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'destroy'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Create tfvars file
+        working-directory: terraform
+        env:
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        run: |
+          cat > dev.tfvars << EOF
+          project_name         = "portfolio"
+          environment          = "dev"
+          aws_region           = "us-east-2"
+          vpc_cidr             = "10.0.0.0/16"
+          public_subnet_cidrs  = ["10.0.1.0/24", "10.0.2.0/24"]
+          private_subnet_cidrs = ["10.0.3.0/24", "10.0.4.0/24"]
+          availability_zones   = ["us-east-2a", "us-east-2b"]
+          cidr_ipv4            = "76.169.33.57/32"
+          db_name              = "portfoliodb"
+          db_username          = "postgres"
+          db_password          = "$DB_PASSWORD"
+          ami_id               = "ami-0c55b159cbfafe1f0"
+          instance_type        = "t3.micro"
+          key_name             = "portfolio-key"
+          certificate_arn      = "arn:aws:acm:us-east-2:905418310734:certificate/ed75b003-a8fe-4034-8b08-63d67298228f"
+          domain_name          = "desbain.com"
+          sns_email            = "gewa11281@gmail.com"
+          account_id           = "905418310734"
+          ssl_policy           = "ELBSecurityPolicy-2016-08"
+          EOF
+
+      - name: Terraform Init
+        working-directory: terraform
+        run: terraform init
+
+      - name: Terraform Destroy
+        working-directory: terraform
+        run: terraform destroy -auto-approve -var-file="dev.tfvars"
