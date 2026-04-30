@@ -1,4 +1,11 @@
 terraform {
+  backend "s3" {
+    bucket  = "portfolio-terraform-state-905418310734"
+    key     = "dev/terraform.tfstate"
+    region  = "us-east-2"
+    encrypt = true
+  }
+
   required_providers {
     aws = {
       source  = "hashicorp/aws"
@@ -11,10 +18,10 @@ terraform {
   }
 }
 
-# Configure the AWS Provider
 provider "aws" {
   region = "us-east-2"
 }
+
 
 module "vpc" {
   source = "./modules/vpc"
