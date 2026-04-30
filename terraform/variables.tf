@@ -1,7 +1,7 @@
 variable "project_name" {
   description = "The name of the project"
   type        = string
-  
+
 }
 
 variable "environment" {
@@ -21,9 +21,9 @@ variable "vpc_cidr" {
 }
 
 variable "availability_zones" {
-    description = "The availability zones to use for subnets"
-    type        = list(string)
-  
+  description = "The availability zones to use for subnets"
+  type        = list(string)
+
 }
 
 variable "public_subnet_cidrs" {
@@ -54,7 +54,7 @@ variable "db_username" {
 variable "db_password" {
   description = "The password for the RDS database"
   type        = string
-  sensitive = true
+  sensitive   = true
 }
 
 variable "instance_type" {
@@ -69,14 +69,14 @@ variable "key_name" {
 
 variable "ami_id" {
   description = "The AMI ID for the EC2 instance"
-  type = string
+  type        = string
 }
 
 
 variable "certificate_arn" {
   description = "The ARN of the ACM certificate for the ALB"
   type        = string
-  
+
 }
 
 variable "domain_name" {
