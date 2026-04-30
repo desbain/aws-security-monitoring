@@ -72,3 +72,13 @@ module "alb" {
   certificate_arn = var.certificate_arn
   launch_template_id = module.ec2.launch_template_id
 }
+
+module "dns" {
+  source = "./modules/dns"
+
+  project_name = var.project_name
+  environment = var.environment
+  domain_name = var.domain_name
+  alb_dns_name = module.alb.alb_dns_name
+  alb_zone_id = module.alb.alb_zone_id
+}

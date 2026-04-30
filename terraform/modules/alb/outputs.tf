@@ -9,3 +9,8 @@ output "alb_arn" {
   description = "The ARN of the Application Load Balancer"
   
 }
+
+output "alb_zone_id" {
+  value       = aws_lb.Portfolio-ALB.zone_id
+  description = "The hosted zone ID of the ALB"
+}
