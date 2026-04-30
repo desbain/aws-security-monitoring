@@ -5,7 +5,6 @@ terraform {
     region  = "us-east-2"
     encrypt = true
   }
-
   required_providers {
     aws = {
       source  = "hashicorp/aws"
@@ -22,10 +21,8 @@ provider "aws" {
   region = "us-east-2"
 }
 
-
 module "vpc" {
-  source = "./modules/vpc"
-
+  source               = "./modules/vpc"
   project_name         = var.project_name
   environment          = var.environment
   vpc_cidr             = var.vpc_cidr
@@ -70,15 +67,13 @@ module "ec2" {
   bastion_host_sg       = module.security.bastion_host_sg
   instance_type         = var.instance_type
   key_name              = var.key_name
-   db_endpoint = module.rds.rds_db_endpoint
-    db_password = var.db_password
-  app_sg = module.security.app_sg
-}
+  db_endpoint           = module.rds.rds_db_endpoint
+  db_password           = var.db_password
+  app_sg                = module.security.app_sg
 }
 
 module "alb" {
-  source = "./modules/alb"
-
+  source             = "./modules/alb"
   project_name       = var.project_name
   environment        = var.environment
   vpc_id             = module.vpc.vpc_id
@@ -89,8 +84,7 @@ module "alb" {
 }
 
 module "dns" {
-  source = "./modules/dns"
-
+  source       = "./modules/dns"
   project_name = var.project_name
   environment  = var.environment
   domain_name  = var.domain_name
@@ -99,8 +93,7 @@ module "dns" {
 }
 
 module "monitoring" {
-  source = "./modules/monitoring"
-
+  source       = "./modules/monitoring"
   project_name = var.project_name
   environment  = var.environment
   account_id   = var.account_id
