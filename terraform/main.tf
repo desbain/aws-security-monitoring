@@ -71,6 +71,7 @@ module "ec2" {
   instance_type         = var.instance_type
   key_name              = var.key_name
    db_endpoint = module.rds.rds_db_endpoint
+    db_password = var.db_password
 }
 
 module "alb" {

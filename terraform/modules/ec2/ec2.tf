@@ -30,23 +30,14 @@ resource "aws_launch_template" "portfolio_launch_template" {
   user_data = base64encode(<<-EOF
     #!/bin/bash
     # Update system
-    yum update -y
+    apt-get update -y
+    apt-get install -y nodejs npm nginx awscli python3
 
-    # Install Node.js 18
-    curl -fsSL https://rpm.nodesource.com/setup_18.x | bash -
-    yum install -y nodejs git nginx
-
-    # Get DB credentials from Secrets Manager
-    DB_SECRET=$(aws secretsmanager get-secret-value \
-      --secret-id portfolio-db-credentials \
-      --region us-east-2 \
-      --query SecretString \
-      --output text)
-
+    # Get RDS endpoint
     DB_HOST="${var.db_endpoint}"
     DB_NAME="portfoliodb"
-    DB_USER=$(echo $DB_SECRET | python3 -c "import sys,json; print(json.load(sys.stdin)['username'])")
-    DB_PASSWORD=$(echo $DB_SECRET | python3 -c "import sys,json; print(json.load(sys.stdin)['password'])")
+    DB_USER="postgres"
+    DB_PASSWORD="${var.db_password}"
 
     # Create app directory
     mkdir -p /app
@@ -54,7 +45,7 @@ resource "aws_launch_template" "portfolio_launch_template" {
 
     # Create server.js
     cat > /app/server.js << 'SERVEREOF'
-    ${file("${path.module}/../../server.js")}
+${file("${path.module}/../../server.js")}
     SERVEREOF
 
     # Create package.json
@@ -74,62 +65,60 @@ resource "aws_launch_template" "portfolio_launch_template" {
 
     # Create .env file
     cat > /app/.env << ENVEOF
-    DB_HOST=$DB_HOST
-    DB_PORT=5432
-    DB_NAME=$DB_NAME
-    DB_USER=$DB_USER
-    DB_PASSWORD=$DB_PASSWORD
-    PORT=3000
+DB_HOST=$DB_HOST
+DB_PORT=5432
+DB_NAME=$DB_NAME
+DB_USER=$DB_USER
+DB_PASSWORD=$DB_PASSWORD
+PORT=3000
     ENVEOF
 
     # Install dependencies
-    npm install
+    cd /app && npm install
 
     # Create systemd service
     cat > /etc/systemd/system/portfolio.service << 'SVCEOF'
-    [Unit]
-    Description=Portfolio API
-    After=network.target
+[Unit]
+Description=Portfolio API
+After=network.target
 
-    [Service]
-    Type=simple
-    User=root
-    WorkingDirectory=/app
-    ExecStart=/usr/bin/node server.js
-    Restart=always
-    RestartSec=10
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/app
+ExecStart=/usr/bin/node server.js
+Restart=always
+RestartSec=10
+EnvironmentFile=/app/.env
 
-    [Install]
-    WantedBy=multi-user.target
+[Install]
+WantedBy=multi-user.target
     SVCEOF
 
     # Configure Nginx
-    cat > /etc/nginx/conf.d/portfolio.conf << 'NGINXEOF'
-    server {
-        listen 80;
-        server_name _;
+    cat > /etc/nginx/sites-enabled/default << 'NGINXEOF'
+server {
+    listen 80;
+    server_name _;
 
-        location /health {
-            proxy_pass http://localhost:3000/health;
-        }
-
-        location / {
-            proxy_pass http://localhost:3000;
-            proxy_http_version 1.1;
-            proxy_set_header Upgrade $http_upgrade;
-            proxy_set_header Connection 'upgrade';
-            proxy_set_header Host $host;
-            proxy_cache_bypass $http_upgrade;
-        }
+    location /health {
+        proxy_pass http://localhost:3000/health;
     }
+
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}
     NGINXEOF
 
     # Start services
     systemctl daemon-reload
     systemctl enable portfolio
     systemctl start portfolio
-    systemctl enable nginx
-    systemctl start nginx
+    systemctl restart nginx
   EOF
   )
 
