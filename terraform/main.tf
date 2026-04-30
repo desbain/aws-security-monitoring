@@ -25,7 +25,6 @@ module "vpc" {
 
 module "security" {
   source = "./modules/security"
-
   vpc_id = module.vpc.vpc_id
   project_name = var.project_name
   environment = var.environment
@@ -60,4 +59,16 @@ module "ec2" {
   bastion_host_sg = module.security.bastion_host_sg
   instance_type = var.instance_type
   key_name = var.key_name
+}
+
+module "alb" {
+  source = "./modules/alb"
+
+  project_name = var.project_name
+  environment = var.environment
+  vpc_id = module.vpc.vpc_id
+  public_subnet_ids = module.vpc.public_subnet_ids
+  alb_sg = module.security.alb_sg
+  certificate_arn = var.certificate_arn
+  launch_template_id = module.ec2.launch_template_id
 }
