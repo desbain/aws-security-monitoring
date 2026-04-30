@@ -48,3 +48,8 @@ variable "db_password" {
   type        = string
   sensitive   = true
 }
+
+variable "app_sg" {
+  description = "Security group for app instances"
+  type        = string
+}

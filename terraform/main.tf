@@ -72,6 +72,8 @@ module "ec2" {
   key_name              = var.key_name
    db_endpoint = module.rds.rds_db_endpoint
     db_password = var.db_password
+  app_sg = module.security.app_sg
+}
 }
 
 module "alb" {

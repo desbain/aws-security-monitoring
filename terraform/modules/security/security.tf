@@ -90,3 +90,39 @@ resource "aws_vpc_security_group_egress_rule" "rds_all_egress" {
   ip_protocol       = "-1" # semantically equivalent to all ports
 
 }
+
+# Creating App security group-------------------------------------------------------
+resource "aws_security_group" "app_sg" {
+  name        = "${var.project_name}-${var.environment}-app-sg"
+  description = "Allow HTTP from ALB and SSH from bastion"
+  vpc_id      = var.vpc_id
+
+  tags = {
+    Name = "${var.project_name}-${var.environment}-app-sg"
+  }
+}
+
+# Allow HTTP from ALB
+resource "aws_vpc_security_group_ingress_rule" "allow_http_from_alb" {
+  security_group_id            = aws_security_group.app_sg.id
+  referenced_security_group_id = aws_security_group.alb_sg.id
+  from_port                    = 80
+  ip_protocol                  = "tcp"
+  to_port                      = 80
+}
+
+# Allow SSH from bastion
+resource "aws_vpc_security_group_ingress_rule" "allow_ssh_from_bastion" {
+  security_group_id            = aws_security_group.app_sg.id
+  referenced_security_group_id = aws_security_group.bastion_host_sg.id
+  from_port                    = 22
+  ip_protocol                  = "tcp"
+  to_port                      = 22
+}
+
+# Allow all outbound
+resource "aws_vpc_security_group_egress_rule" "app_egress" {
+  security_group_id = aws_security_group.app_sg.id
+  cidr_ipv4         = "0.0.0.0/0"
+  ip_protocol       = "-1"
+}

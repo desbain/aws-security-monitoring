@@ -24,7 +24,7 @@ resource "aws_launch_template" "portfolio_launch_template" {
   }
 
   network_interfaces {
-    security_groups = [var.bastion_host_sg]
+     security_groups = [var.app_sg]
   }
 
   user_data = base64encode(<<-EOF
