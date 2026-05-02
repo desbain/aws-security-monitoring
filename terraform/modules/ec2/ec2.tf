@@ -53,18 +53,8 @@ resource "aws_launch_template" "portfolio_launch_template" {
 
     # Create package.json
     cat > /app/package.json << 'PKGEOF'
-    {
-      "name": "portfolio-api",
-      "version": "1.0.0",
-      "main": "server.js",
-      "dependencies": {
-        "express": "^4.18.2",
-        "pg": "^8.11.0",
-        "cors": "^2.8.5",
-        "dotenv": "^16.0.3"
-      }
-    }
-    PKGEOF
+{"name":"portfolio-api","version":"1.0.0","main":"server.js","dependencies":{"express":"^4.18.2","pg":"^8.11.0","cors":"^2.8.5","dotenv":"^16.0.3"}}
+PKGEOF
 
     # Create .env file
     cat > /app/.env << ENVEOF
