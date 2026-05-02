@@ -41,6 +41,38 @@ app.get('/health', (req, res) => {
   res.json({ status: 'healthy', timestamp: new Date() });
 });
 
+// Serve portfolio homepage
+app.get('/', (req, res) => {
+  res.send(`
+<!DOCTYPE html>
+<html>
+<head>
+  <title>George Awa — DevSecOps Engineer</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
+    h1 { color: #333; }
+    .badge { background: #28a745; color: white; padding: 5px 10px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <h1>George Awa</h1>
+  <p><span class="badge">DevSecOps Engineer</span></p>
+  <h2>AWS Portfolio Project</h2>
+  <p>Production-grade cloud infrastructure built on AWS</p>
+  <ul>
+    <li>✅ VPC + Networking</li>
+    <li>✅ Auto Scaling Group</li>
+    <li>✅ RDS PostgreSQL</li>
+    <li>✅ GuardDuty Security Monitoring</li>
+    <li>✅ Terraform IaC</li>
+    <li>✅ GitHub Actions CI/CD</li>
+  </ul>
+  <p><a href="/health">Health Check</a> | <a href="/api/visitors/count">Visitor Count</a></p>
+</body>
+</html>
+  `);
+});
+
 // GET all projects
 app.get('/api/projects', async (req, res) => {
   try {
