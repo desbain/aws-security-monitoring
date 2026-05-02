@@ -28,12 +28,16 @@ resource "aws_launch_template" "portfolio_launch_template" {
   }
 
   user_data = base64encode(<<-EOF
-    #!/bin/bash
+ #!/bin/bash
     set -e
     exec > /var/log/user-data.log 2>&1
 
+    # Prevent interactive prompts
+    export DEBIAN_FRONTEND=noninteractive
+
     # Update system
     apt-get update -y
+    apt-get upgrade -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold"
     apt-get install -y curl git nginx
 
     # Install Node.js 18
