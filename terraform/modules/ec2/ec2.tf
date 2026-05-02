@@ -49,7 +49,7 @@ resource "aws_launch_template" "portfolio_launch_template" {
     cd /app
 
     # Pull server.js from GitHub
-    curl -o /app/server.js https://raw.githubusercontent.com/desbain/aws-security-monitoring/master/server.js
+    curl -o /app/index.html https://raw.githubusercontent.com/desbain/aws-security-monitoring/master/index.html
 
     # Create package.json
     cat > /app/package.json << 'PKGEOF'
