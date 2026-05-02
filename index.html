@@ -1,0 +1,1202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>George Awa — DevSecOps Engineer</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&family=Exo+2:wght@300;400;600;800&display=swap" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-primary: #020c14;
+      --bg-secondary: #040f1a;
+      --bg-card: #061520;
+      --bg-card-hover: #0a1f30;
+      --accent-cyan: #00d4ff;
+      --accent-green: #00ff88;
+      --accent-orange: #ff6b35;
+      --accent-red: #ff3366;
+      --accent-purple: #9b59b6;
+      --text-primary: #e8f4fd;
+      --text-secondary: #7ab3cc;
+      --text-muted: #3d6b7a;
+      --border-color: #0d2535;
+      --border-glow: rgba(0, 212, 255, 0.15);
+      --grid-color: rgba(0, 212, 255, 0.03);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: 'Exo 2', sans-serif;
+      overflow-x: hidden;
+      background-image:
+        linear-gradient(var(--grid-color) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+
+    /* ── Scanline overlay ── */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 0, 0, 0.03) 2px,
+        rgba(0, 0, 0, 0.03) 4px
+      );
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* ── Navbar ── */
+    .navbar {
+      background: rgba(2, 12, 20, 0.95) !important;
+      border-bottom: 1px solid var(--border-color);
+      backdrop-filter: blur(20px);
+      padding: 1rem 0;
+    }
+
+    .navbar-brand {
+      font-family: 'Share Tech Mono', monospace;
+      color: var(--accent-cyan) !important;
+      font-size: 1.1rem;
+      letter-spacing: 2px;
+    }
+
+    .navbar-brand span {
+      color: var(--accent-green);
+    }
+
+    .nav-link {
+      color: var(--text-secondary) !important;
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      font-size: 0.85rem;
+      transition: color 0.2s;
+      padding: 0.5rem 1rem !important;
+    }
+
+    .nav-link:hover {
+      color: var(--accent-cyan) !important;
+    }
+
+    /* ── Status bar ── */
+    .status-bar {
+      background: rgba(0, 212, 255, 0.05);
+      border-bottom: 1px solid var(--border-color);
+      padding: 0.4rem 0;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      overflow: hidden;
+    }
+
+    .status-bar .status-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin-right: 2rem;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent-green);
+      animation: pulse 2s infinite;
+    }
+
+    .status-dot.orange { background: var(--accent-orange); }
+    .status-dot.cyan { background: var(--accent-cyan); }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    /* ── Hero ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      position: relative;
+      padding: 8rem 0 4rem;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background:
+        radial-gradient(ellipse 80% 60% at 20% 50%, rgba(0, 212, 255, 0.04) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 80% at 80% 50%, rgba(0, 255, 136, 0.03) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .hero-tag {
+      font-family: 'Share Tech Mono', monospace;
+      color: var(--accent-cyan);
+      font-size: 0.8rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+      opacity: 0;
+      animation: fadeUp 0.6s ease forwards 0.2s;
+    }
+
+    .hero-tag::before {
+      content: '> ';
+      color: var(--accent-green);
+    }
+
+    .hero h1 {
+      font-family: 'Exo 2', sans-serif;
+      font-weight: 800;
+      font-size: clamp(2.5rem, 6vw, 5rem);
+      line-height: 1.05;
+      color: var(--text-primary);
+      opacity: 0;
+      animation: fadeUp 0.6s ease forwards 0.4s;
+    }
+
+    .hero h1 .highlight {
+      color: var(--accent-cyan);
+      position: relative;
+    }
+
+    .hero-subtitle {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1.2rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+      letter-spacing: 1px;
+      margin-top: 1rem;
+      opacity: 0;
+      animation: fadeUp 0.6s ease forwards 0.6s;
+    }
+
+    .hero-desc {
+      font-size: 1rem;
+      color: var(--text-muted);
+      max-width: 520px;
+      line-height: 1.7;
+      margin-top: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.6s ease forwards 0.8s;
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2.5rem;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fadeUp 0.6s ease forwards 1s;
+    }
+
+    .btn-primary-custom {
+      background: transparent;
+      border: 1px solid var(--accent-cyan);
+      color: var(--accent-cyan);
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 0.75rem 2rem;
+      font-size: 0.85rem;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: inline-block;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-primary-custom::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 100%; height: 100%;
+      background: rgba(0, 212, 255, 0.1);
+      transition: left 0.3s;
+    }
+
+    .btn-primary-custom:hover::before { left: 0; }
+    .btn-primary-custom:hover {
+      color: var(--accent-cyan);
+      box-shadow: 0 0 20px rgba(0, 212, 255, 0.2);
+    }
+
+    .btn-secondary-custom {
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 0.75rem 2rem;
+      font-size: 0.85rem;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-secondary-custom:hover {
+      border-color: var(--text-secondary);
+      color: var(--text-primary);
+    }
+
+    /* ── Terminal block ── */
+    .terminal {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      padding: 1.5rem;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      line-height: 1.8;
+      opacity: 0;
+      animation: fadeUp 0.6s ease forwards 1.2s;
+    }
+
+    .terminal-header {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .terminal-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+    }
+
+    .td-red { background: #ff5f56; }
+    .td-yellow { background: #ffbd2e; }
+    .td-green { background: #27c93f; }
+
+    .terminal .cmd { color: var(--accent-green); }
+    .terminal .out { color: var(--text-muted); }
+    .terminal .highlight { color: var(--accent-cyan); }
+    .terminal .success { color: var(--accent-green); }
+    .terminal .warn { color: var(--accent-orange); }
+
+    /* ── Section ── */
+    section {
+      padding: 5rem 0;
+      position: relative;
+    }
+
+    .section-label {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--accent-cyan);
+      margin-bottom: 0.5rem;
+    }
+
+    .section-label::before { content: '// '; color: var(--text-muted); }
+
+    .section-title {
+      font-family: 'Exo 2', sans-serif;
+      font-weight: 800;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      color: var(--text-primary);
+      margin-bottom: 1rem;
+    }
+
+    .section-divider {
+      width: 60px;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent-cyan), transparent);
+      margin-bottom: 3rem;
+    }
+
+    /* ── Cards ── */
+    .card-custom {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      padding: 1.75rem;
+      transition: all 0.3s;
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card-custom::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 3px; height: 0;
+      background: var(--accent-cyan);
+      transition: height 0.3s;
+    }
+
+    .card-custom:hover {
+      background: var(--bg-card-hover);
+      border-color: rgba(0, 212, 255, 0.2);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 40px rgba(0, 212, 255, 0.05);
+    }
+
+    .card-custom:hover::before { height: 100%; }
+
+    .card-icon {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+    }
+
+    .card-title {
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 700;
+      font-size: 1.1rem;
+      letter-spacing: 1px;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .card-text {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* ── Project cards ── */
+    .project-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      padding: 2rem;
+      transition: all 0.3s;
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .project-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0;
+      width: 0; height: 2px;
+      background: linear-gradient(90deg, var(--accent-cyan), var(--accent-green));
+      transition: width 0.4s;
+    }
+
+    .project-card:hover::after { width: 100%; }
+
+    .project-card:hover {
+      background: var(--bg-card-hover);
+      border-color: rgba(0, 212, 255, 0.15);
+      transform: translateY(-4px);
+      box-shadow: 0 15px 50px rgba(0, 212, 255, 0.06);
+    }
+
+    .project-num {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      letter-spacing: 2px;
+      margin-bottom: 0.75rem;
+    }
+
+    .project-title {
+      font-family: 'Exo 2', sans-serif;
+      font-weight: 700;
+      font-size: 1.15rem;
+      color: var(--text-primary);
+      margin-bottom: 0.75rem;
+    }
+
+    .project-desc {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 1.25rem;
+    }
+
+    .tag {
+      display: inline-block;
+      background: rgba(0, 212, 255, 0.06);
+      border: 1px solid rgba(0, 212, 255, 0.15);
+      color: var(--accent-cyan);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.65rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 2px;
+      margin: 0.2rem 0.2rem 0.2rem 0;
+      letter-spacing: 0.5px;
+    }
+
+    .tag.green {
+      background: rgba(0, 255, 136, 0.06);
+      border-color: rgba(0, 255, 136, 0.15);
+      color: var(--accent-green);
+    }
+
+    .tag.orange {
+      background: rgba(255, 107, 53, 0.06);
+      border-color: rgba(255, 107, 53, 0.15);
+      color: var(--accent-orange);
+    }
+
+    .project-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 1px;
+      margin-top: 1rem;
+    }
+
+    .project-status.done { color: var(--accent-green); }
+    .project-status.next { color: var(--accent-orange); }
+    .project-status.planned { color: var(--text-muted); }
+
+    /* ── Skills ── */
+    .skill-group {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .skill-group-title {
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 700;
+      font-size: 0.8rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--accent-cyan);
+      margin-bottom: 1rem;
+    }
+
+    .skill-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.75rem;
+    }
+
+    .skill-name {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+    }
+
+    .skill-bar {
+      width: 140px;
+      height: 3px;
+      background: var(--border-color);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .skill-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent-cyan), var(--accent-green));
+      border-radius: 2px;
+      transition: width 1s ease;
+    }
+
+    /* ── Stats ── */
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      padding: 1.5rem;
+      text-align: center;
+    }
+
+    .stat-num {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 2.5rem;
+      color: var(--accent-cyan);
+      display: block;
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.8rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    /* ── Cert badges ── */
+    .cert-badge {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      transition: all 0.3s;
+    }
+
+    .cert-badge:hover {
+      border-color: rgba(0, 212, 255, 0.2);
+      background: var(--bg-card-hover);
+    }
+
+    .cert-icon {
+      font-size: 1.5rem;
+      color: var(--accent-orange);
+    }
+
+    .cert-name {
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: var(--text-primary);
+      letter-spacing: 0.5px;
+    }
+
+    .cert-org {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--text-muted);
+    }
+
+    /* ── Contact ── */
+    .contact-link {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem 1.25rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      text-decoration: none;
+      color: var(--text-secondary);
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 600;
+      font-size: 0.9rem;
+      letter-spacing: 1px;
+      transition: all 0.3s;
+      margin-bottom: 0.75rem;
+    }
+
+    .contact-link:hover {
+      border-color: rgba(0, 212, 255, 0.2);
+      color: var(--accent-cyan);
+      background: var(--bg-card-hover);
+    }
+
+    .contact-link i {
+      font-size: 1.2rem;
+      color: var(--accent-cyan);
+    }
+
+    /* ── Footer ── */
+    footer {
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border-color);
+      padding: 2rem 0;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    footer span { color: var(--accent-cyan); }
+
+    /* ── Animations ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── Divider ── */
+    .section-sep {
+      border: none;
+      border-top: 1px solid var(--border-color);
+      margin: 0;
+    }
+
+    /* ── Compliance badges ── */
+    .compliance-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(0, 255, 136, 0.05);
+      border: 1px solid rgba(0, 255, 136, 0.15);
+      color: var(--accent-green);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.68rem;
+      padding: 0.3rem 0.75rem;
+      border-radius: 2px;
+      letter-spacing: 1px;
+      margin: 0.25rem;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg-primary); }
+    ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 2px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--accent-cyan); }
+  </style>
+</head>
+<body>
+
+  <!-- Status Bar -->
+  <div class="status-bar">
+    <div class="container-fluid px-4">
+      <span class="status-item"><span class="status-dot"></span> SYSTEMS OPERATIONAL</span>
+      <span class="status-item"><span class="status-dot cyan"></span> GUARDDUTY: ACTIVE</span>
+      <span class="status-item"><span class="status-dot orange"></span> THREAT LEVEL: LOW</span>
+      <span class="status-item">AWS ACCOUNT: 905418310734</span>
+      <span class="status-item">REGION: us-east-2</span>
+    </div>
+  </div>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="#">GEORGE<span>_</span>AWA</a>
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+        <i class="bi bi-list text-white fs-4"></i>
+      </button>
+      <div class="collapse navbar-collapse" id="navMenu">
+        <ul class="navbar-nav ms-auto gap-1">
+          <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+          <li class="nav-item"><a class="nav-link" href="#projects">Projects</a></li>
+          <li class="nav-item"><a class="nav-link" href="#skills">Skills</a></li>
+          <li class="nav-item"><a class="nav-link" href="#certifications">Certs</a></li>
+          <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero" id="about">
+    <div class="container">
+      <div class="row align-items-center gy-5">
+        <div class="col-lg-7">
+          <div class="hero-tag">DevSecOps Engineer — GRC &amp; Cloud Security</div>
+          <h1>Securing the<br /><span class="highlight">Pipeline.</span><br />Automating the<br /><span class="highlight">Response.</span></h1>
+          <p class="hero-subtitle">AWS · Kubernetes · Terraform · CI/CD · Compliance</p>
+          <p class="hero-desc">
+            I build security-first cloud infrastructure — from hardened CI/CD pipelines
+            to automated threat detection and response systems. Every deployment is scanned,
+            every finding is acted on, every resource is tracked as code.
+          </p>
+          <div class="hero-cta">
+            <a href="#projects" class="btn-primary-custom">View Projects</a>
+            <a href="#contact" class="btn-secondary-custom">Get In Touch</a>
+          </div>
+          <div class="mt-4">
+            <span class="compliance-badge"><i class="bi bi-check-circle-fill"></i> NIST 800-53</span>
+            <span class="compliance-badge"><i class="bi bi-check-circle-fill"></i> PCI-DSS</span>
+            <span class="compliance-badge"><i class="bi bi-check-circle-fill"></i> HIPAA</span>
+            <span class="compliance-badge"><i class="bi bi-check-circle-fill"></i> CIS Benchmark</span>
+          </div>
+        </div>
+        <div class="col-lg-5">
+          <div class="terminal">
+            <div class="terminal-header">
+              <div class="terminal-dot td-red"></div>
+              <div class="terminal-dot td-yellow"></div>
+              <div class="terminal-dot td-green"></div>
+              <span style="margin-left:0.5rem;font-size:0.7rem;color:var(--text-muted)">george@devsecops ~ zsh</span>
+            </div>
+            <div><span class="cmd">$</span> kubectl get pods -n devsecops</div>
+            <div class="out">NAME                          READY   STATUS</div>
+            <div class="out">devsecops-app-5648b8cf48-hpd5c <span class="success">1/1     Running</span></div>
+            <div class="out">devsecops-app-5648b8cf48-kt6k2 <span class="success">1/1     Running</span></div>
+            <br/>
+            <div><span class="cmd">$</span> terraform output cluster_name</div>
+            <div class="highlight">"devsecops-cluster"</div>
+            <br/>
+            <div><span class="cmd">$</span> aws guardduty list-detectors</div>
+            <div class="out">DetectorIds: [<span class="highlight">"a8cee631..."</span>]</div>
+            <br/>
+            <div><span class="cmd">$</span> curl https://desbain.com/health</div>
+            <div class="success">{"status":"healthy"}</div>
+            <br/>
+            <div><span class="cmd">$</span> <span style="animation: pulse 1s infinite;color:var(--accent-green)">█</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-sep" />
+
+  <!-- Stats -->
+  <section style="padding: 3rem 0;">
+    <div class="container">
+      <div class="row g-3 text-center fade-in">
+        <div class="col-6 col-md-3">
+          <div class="stat-card">
+            <span class="stat-num" id="visitor-count">...</span>
+            <span class="stat-label">Visitors</span>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="stat-card">
+            <span class="stat-num">3</span>
+            <span class="stat-label">Cloud Platforms</span>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="stat-card">
+            <span class="stat-num">12+</span>
+            <span class="stat-label">Security Tools</span>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="stat-card">
+            <span class="stat-num">100%</span>
+            <span class="stat-label">IaC Coverage</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-sep" />
+
+  <!-- Projects -->
+  <section id="projects">
+    <div class="container">
+      <div class="fade-in">
+        <div class="section-label">portfolio</div>
+        <h2 class="section-title">Projects</h2>
+        <div class="section-divider"></div>
+      </div>
+
+      <div class="row g-4">
+
+        <!-- Project 1 -->
+        <div class="col-md-6 col-lg-4 fade-in">
+          <div class="project-card">
+            <div class="project-num">PROJECT_01 //</div>
+            <div class="project-title">DevSecOps CI/CD Pipeline</div>
+            <p class="project-desc">
+              6-stage security pipeline with SAST, dependency scanning, container scanning,
+              and automated deployment to EKS. Full Terraform IaC for VPC, IAM, EKS, and ECR.
+            </p>
+            <div>
+              <span class="tag">GitHub Actions</span>
+              <span class="tag">Terraform</span>
+              <span class="tag green">EKS</span>
+              <span class="tag green">ECR</span>
+              <span class="tag">Bandit</span>
+              <span class="tag">Trivy</span>
+              <span class="tag orange">Helm</span>
+            </div>
+            <div class="project-status done">
+              <span class="status-dot"></span> DEPLOYED
+            </div>
+          </div>
+        </div>
+
+        <!-- Project 2 -->
+        <div class="col-md-6 col-lg-4 fade-in">
+          <div class="project-card">
+            <div class="project-num">PROJECT_02 //</div>
+            <div class="project-title">AWS Security Monitoring</div>
+            <p class="project-desc">
+              Automated threat detection and response using GuardDuty, EventBridge, and Lambda.
+              Auto-remediates compromised credentials and isolates EC2 instances in seconds.
+            </p>
+            <div>
+              <span class="tag">GuardDuty</span>
+              <span class="tag">EventBridge</span>
+              <span class="tag green">Lambda</span>
+              <span class="tag green">Security Hub</span>
+              <span class="tag">CloudTrail</span>
+              <span class="tag orange">SNS</span>
+            </div>
+            <div class="project-status next">
+              <span class="status-dot orange"></span> IN PROGRESS
+            </div>
+          </div>
+        </div>
+
+        <!-- Project 3 -->
+        <div class="col-md-6 col-lg-4 fade-in">
+          <div class="project-card">
+            <div class="project-num">PROJECT_03 //</div>
+            <div class="project-title">Hardened EKS Cluster</div>
+            <p class="project-desc">
+              Production-grade EKS with Checkov IaC scanning, ArgoCD GitOps, Pod Security
+              Standards, network policies, and IRSA for least-privilege service accounts.
+            </p>
+            <div>
+              <span class="tag">Checkov</span>
+              <span class="tag">ArgoCD</span>
+              <span class="tag green">Terraform</span>
+              <span class="tag green">RBAC</span>
+              <span class="tag">NetworkPolicy</span>
+              <span class="tag orange">IRSA</span>
+            </div>
+            <div class="project-status planned">
+              <span class="status-dot" style="background:var(--text-muted)"></span> PLANNED
+            </div>
+          </div>
+        </div>
+
+        <!-- Project 4 -->
+        <div class="col-md-6 col-lg-4 fade-in">
+          <div class="project-card">
+            <div class="project-num">PROJECT_04 //</div>
+            <div class="project-title">Linux SME Lab</div>
+            <p class="project-desc">
+              CIS Benchmark hardening scripts, SSH security, UFW firewall automation,
+              user lifecycle management, and a complete Linux command practice lab.
+            </p>
+            <div>
+              <span class="tag">CIS Benchmark</span>
+              <span class="tag">Bash</span>
+              <span class="tag green">UFW</span>
+              <span class="tag green">auditd</span>
+              <span class="tag">PAM</span>
+              <span class="tag orange">SSH</span>
+            </div>
+            <div class="project-status planned">
+              <span class="status-dot" style="background:var(--text-muted)"></span> PLANNED
+            </div>
+          </div>
+        </div>
+
+        <!-- Project 5 -->
+        <div class="col-md-6 col-lg-4 fade-in">
+          <div class="project-card">
+            <div class="project-num">PROJECT_05 //</div>
+            <div class="project-title">Docker Mastery</div>
+            <p class="project-desc">
+              Multi-stage hardened builds, Docker Compose stacks with isolated networks,
+              Prometheus + Grafana monitoring, and automated security auditing scripts.
+            </p>
+            <div>
+              <span class="tag">Docker</span>
+              <span class="tag">Compose</span>
+              <span class="tag green">Prometheus</span>
+              <span class="tag green">Grafana</span>
+              <span class="tag">Trivy</span>
+              <span class="tag orange">Alpine</span>
+            </div>
+            <div class="project-status planned">
+              <span class="status-dot" style="background:var(--text-muted)"></span> PLANNED
+            </div>
+          </div>
+        </div>
+
+        <!-- Capstone -->
+        <div class="col-md-6 col-lg-4 fade-in">
+          <div class="project-card" style="border-color: rgba(0,212,255,0.2);">
+            <div class="project-num" style="color:var(--accent-cyan)">CAPSTONE //</div>
+            <div class="project-title">ShieldOps Platform</div>
+            <p class="project-desc">
+              Enterprise-grade secure cloud delivery platform combining all projects.
+              One <code style="color:var(--accent-green);font-size:0.75rem">make deploy</code> command provisions the entire stack end to end.
+            </p>
+            <div>
+              <span class="tag">Full Stack</span>
+              <span class="tag">Terraform</span>
+              <span class="tag green">EKS</span>
+              <span class="tag green">GuardDuty</span>
+              <span class="tag">ArgoCD</span>
+              <span class="tag orange">Lambda</span>
+            </div>
+            <div class="project-status planned">
+              <span class="status-dot" style="background:var(--text-muted)"></span> PLANNED
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-sep" />
+
+  <!-- Skills -->
+  <section id="skills">
+    <div class="container">
+      <div class="fade-in">
+        <div class="section-label">expertise</div>
+        <h2 class="section-title">Skills</h2>
+        <div class="section-divider"></div>
+      </div>
+
+      <div class="row g-4">
+        <div class="col-md-6 fade-in">
+          <div class="skill-group">
+            <div class="skill-group-title">Cloud & Infrastructure</div>
+            <div class="skill-item"><span class="skill-name">AWS (EKS, ECR, VPC, IAM)</span><div class="skill-bar"><div class="skill-fill" style="width:85%"></div></div></div>
+            <div class="skill-item"><span class="skill-name">Terraform</span><div class="skill-bar"><div class="skill-fill" style="width:80%"></div></div></div>
+            <div class="skill-item"><span class="skill-name">Kubernetes</span><div class="skill-bar"><div class="skill-fill" style="width:78%"></div></div></div>
+            <div class="skill-item"><span class="skill-name">Docker</span><div class="skill-bar"><div class="skill-fill" style="width:85%"></div></div></div>
+          </div>
+          <div class="skill-group">
+            <div class="skill-group-title">CI/CD & Automation</div>
+            <div class="skill-item"><span class="skill-name">GitHub Actions</span><div class="skill-bar"><div class="skill-fill" style="width:88%"></div></div></div>
+            <div class="skill-item"><span class="skill-name">Helm</span><div class="skill-bar"><div class="skill-fill" style="width:75%"></div></div></div>
+            <div class="skill-item"><span class="skill-name">ArgoCD</span><div class="skill-bar"><div class="skill-fill" style="width:65%"></div></div></div>
+            <div class="skill-item"><span class="skill-name">Bash Scripting</span><div class="skill-bar"><div class="skill-fill" style="width:80%"></div></div></div>
+          </div>
+        </div>
+        <div class="col-md-6 fade-in">
+          <div class="skill-group">
+            <div class="skill-group-title">Security & Compliance</div>
+            <div class="skill-item"><span class="skill-name">NIST 800-53</span><div class="skill-bar"><div class="skill-fill" style="width:82%"></div></div></div>
+            <div class="skill-item"><span class="skill-name">PCI-DSS</span><div class="skill-bar"><div class="skill-fill" style="width:78%"></div></div></div>
+            <div class="skill-item"><span class="skill-name">HIPAA</span><div class="skill-bar"><div class="skill-fill" style="width:75%"></div></div></div>
+            <div class="skill-item"><span class="skill-name">CIS Benchmark</span><div class="skill-bar"><div class="skill-fill" style="width:80%"></div></div></div>
+          </div>
+          <div class="skill-group">
+            <div class="skill-group-title">Security Tools</div>
+            <div class="skill-item"><span class="skill-name">Bandit / Safety</span><div class="skill-bar"><div class="skill-fill" style="width:88%"></div></div></div>
+            <div class="skill-item"><span class="skill-name">Trivy / Checkov</span><div class="skill-bar"><div class="skill-fill" style="width:85%"></div></div></div>
+            <div class="skill-item"><span class="skill-name">GuardDuty / Security Hub</span><div class="skill-bar"><div class="skill-fill" style="width:80%"></div></div></div>
+            <div class="skill-item"><span class="skill-name">CloudTrail / EventBridge</span><div class="skill-bar"><div class="skill-fill" style="width:78%"></div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-sep" />
+
+  <!-- Certifications -->
+  <section id="certifications">
+    <div class="container">
+      <div class="fade-in">
+        <div class="section-label">credentials</div>
+        <h2 class="section-title">Certifications</h2>
+        <div class="section-divider"></div>
+      </div>
+      <div class="row g-3 fade-in">
+        <div class="col-md-6 col-lg-4">
+          <div class="cert-badge">
+            <i class="bi bi-award-fill cert-icon"></i>
+            <div>
+              <div class="cert-name">AWS Solutions Architect</div>
+              <div class="cert-org">Amazon Web Services</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="cert-badge">
+            <i class="bi bi-award-fill cert-icon" style="color:var(--accent-cyan)"></i>
+            <div>
+              <div class="cert-name">CompTIA Security+</div>
+              <div class="cert-org">CompTIA</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="cert-badge">
+            <i class="bi bi-award-fill cert-icon" style="color:var(--accent-green)"></i>
+            <div>
+              <div class="cert-name">Certified Kubernetes Admin</div>
+              <div class="cert-org">Cloud Native Computing Foundation</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-sep" />
+
+  <!-- Contact -->
+  <section id="contact">
+    <div class="container">
+      <div class="fade-in">
+        <div class="section-label">connect</div>
+        <h2 class="section-title">Contact</h2>
+        <div class="section-divider"></div>
+      </div>
+      <div class="row g-5">
+        <div class="col-lg-5 fade-in">
+          <p style="color:var(--text-muted);font-size:0.9rem;line-height:1.7;margin-bottom:2rem;">
+            Available for DevSecOps, Cloud Security, and GRC roles.
+            Let's build something secure together.
+          </p>
+          <a href="mailto:gewa11281@gmail.com" class="contact-link">
+            <i class="bi bi-envelope-fill"></i>
+            gewa11281@gmail.com
+          </a>
+          <a href="https://github.com/desbain" target="_blank" class="contact-link">
+            <i class="bi bi-github"></i>
+            github.com/desbain
+          </a>
+          <a href="https://linkedin.com/in/george-awa" target="_blank" class="contact-link">
+            <i class="bi bi-linkedin"></i>
+            linkedin.com/in/george-awa
+          </a>
+        </div>
+        <div class="col-lg-6 fade-in">
+          <div class="card-custom">
+            <div class="section-label" style="margin-bottom:1rem;">send message</div>
+            <div id="form-message" style="display:none;margin-bottom:1rem;padding:0.75rem;border-radius:4px;font-family:'Share Tech Mono',monospace;font-size:0.8rem;"></div>
+            <div class="mb-3">
+              <input type="text" id="contact-name" placeholder="Your Name"
+                style="width:100%;background:var(--bg-secondary);border:1px solid var(--border-color);color:var(--text-primary);padding:0.75rem 1rem;border-radius:4px;font-family:'Exo 2',sans-serif;font-size:0.9rem;outline:none;"
+                onfocus="this.style.borderColor='var(--accent-cyan)'" onblur="this.style.borderColor='var(--border-color)'" />
+            </div>
+            <div class="mb-3">
+              <input type="email" id="contact-email" placeholder="Your Email"
+                style="width:100%;background:var(--bg-secondary);border:1px solid var(--border-color);color:var(--text-primary);padding:0.75rem 1rem;border-radius:4px;font-family:'Exo 2',sans-serif;font-size:0.9rem;outline:none;"
+                onfocus="this.style.borderColor='var(--accent-cyan)'" onblur="this.style.borderColor='var(--border-color)'" />
+            </div>
+            <div class="mb-3">
+              <textarea id="contact-message" placeholder="Your Message" rows="4"
+                style="width:100%;background:var(--bg-secondary);border:1px solid var(--border-color);color:var(--text-primary);padding:0.75rem 1rem;border-radius:4px;font-family:'Exo 2',sans-serif;font-size:0.9rem;outline:none;resize:vertical;"
+                onfocus="this.style.borderColor='var(--accent-cyan)'" onblur="this.style.borderColor='var(--border-color)'"></textarea>
+            </div>
+            <button onclick="submitContact()"
+              style="background:transparent;border:1px solid var(--accent-cyan);color:var(--accent-cyan);font-family:'Rajdhani',sans-serif;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:0.75rem 2rem;font-size:0.85rem;cursor:pointer;transition:all 0.3s;width:100%;"
+              onmouseover="this.style.background='rgba(0,212,255,0.1)'"
+              onmouseout="this.style.background='transparent'">
+              Send Message
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <p>
+        <span>GEORGE AWA</span> · DevSecOps Engineer · GRC &amp; Cloud Security<br />
+        <span style="color:var(--text-muted);font-size:0.65rem;">
+          Built with Bootstrap 5 · Deployed on AWS EKS · Secured by GuardDuty · IaC with Terraform
+        </span>
+      </p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Intersection Observer for fade-in animations
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => {
+            entry.target.classList.add('visible');
+          }, i * 100);
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+    // Smooth active nav highlighting
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.nav-link');
+
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(section => {
+        if (window.scrollY >= section.offsetTop - 100) {
+          current = section.getAttribute('id');
+        }
+      });
+      navLinks.forEach(link => {
+        link.style.color = '';
+        if (link.getAttribute('href') === '#' + current) {
+          link.style.color = 'var(--accent-cyan)';
+        }
+      });
+    });
+
+    // ── Live API Integration ───────────────────────────────────────────────
+    const API_BASE = window.location.origin;
+
+    async function initVisitor() {
+      try {
+        await fetch(API_BASE + '/api/visitors', { method: 'POST' });
+        const res = await fetch(API_BASE + '/api/visitors/count');
+        const data = await res.json();
+        const el = document.getElementById('visitor-count');
+        if (el) el.textContent = data.count.toLocaleString();
+      } catch(e) {
+        const el = document.getElementById('visitor-count');
+        if (el) el.textContent = '–';
+      }
+    }
+
+    async function submitContact() {
+      const name    = document.getElementById('contact-name').value.trim();
+      const email   = document.getElementById('contact-email').value.trim();
+      const message = document.getElementById('contact-message').value.trim();
+      const msgEl   = document.getElementById('form-message');
+
+      if (!name || !email || !message) {
+        msgEl.style.display = 'block';
+        msgEl.style.background = 'rgba(255,51,102,0.1)';
+        msgEl.style.border = '1px solid rgba(255,51,102,0.3)';
+        msgEl.style.color = '#ff3366';
+        msgEl.textContent = '❌ All fields are required.';
+        return;
+      }
+      try {
+        const res = await fetch(API_BASE + '/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, message })
+        });
+        const data = await res.json();
+        if (data.success) {
+          msgEl.style.display = 'block';
+          msgEl.style.background = 'rgba(0,255,136,0.1)';
+          msgEl.style.border = '1px solid rgba(0,255,136,0.3)';
+          msgEl.style.color = '#00ff88';
+          msgEl.textContent = '✅ Message sent! I will get back to you soon.';
+          document.getElementById('contact-name').value = '';
+          document.getElementById('contact-email').value = '';
+          document.getElementById('contact-message').value = '';
+        }
+      } catch(e) {
+        msgEl.style.display = 'block';
+        msgEl.style.background = 'rgba(255,51,102,0.1)';
+        msgEl.style.border = '1px solid rgba(255,51,102,0.3)';
+        msgEl.style.color = '#ff3366';
+        msgEl.textContent = '❌ Failed to send. Please email directly.';
+      }
+    }
+
+    initVisitor();
+  </script>
+</body>
+</html>
