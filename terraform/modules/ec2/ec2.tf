@@ -29,24 +29,23 @@ resource "aws_launch_template" "portfolio_launch_template" {
 
   user_data = base64encode(<<-EOF
     #!/bin/bash
+    set -e
+    exec > /var/log/user-data.log 2>&1
+
     # Update system
     apt-get update -y
-    apt-get install -y nodejs npm nginx awscli python3
+    apt-get install -y curl git nginx
 
-    # Get RDS endpoint
-    DB_HOST="${var.db_endpoint}"
-    DB_NAME="portfoliodb"
-    DB_USER="postgres"
-    DB_PASSWORD="${var.db_password}"
+    # Install Node.js 18
+    curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
+    apt-get install -y nodejs
 
     # Create app directory
     mkdir -p /app
     cd /app
 
-    # Create server.js
-    cat > /app/server.js << 'SERVEREOF'
-${file("${path.module}/../../server.js")}
-    SERVEREOF
+    # Pull server.js from GitHub
+    curl -o /app/server.js https://raw.githubusercontent.com/desbain/aws-security-monitoring/master/server.js
 
     # Create package.json
     cat > /app/package.json << 'PKGEOF'
@@ -65,53 +64,49 @@ ${file("${path.module}/../../server.js")}
 
     # Create .env file
     cat > /app/.env << ENVEOF
-DB_HOST=$DB_HOST
-DB_PORT=5432
-DB_NAME=$DB_NAME
-DB_USER=$DB_USER
-DB_PASSWORD=$DB_PASSWORD
-PORT=3000
+    DB_HOST=${var.db_endpoint}
+    DB_PORT=5432
+    DB_NAME=portfoliodb
+    DB_USER=postgres
+    DB_PASSWORD=${var.db_password}
+    PORT=3000
     ENVEOF
 
     # Install dependencies
-    cd /app && npm install
+    npm install
 
     # Create systemd service
     cat > /etc/systemd/system/portfolio.service << 'SVCEOF'
-[Unit]
-Description=Portfolio API
-After=network.target
+    [Unit]
+    Description=Portfolio API
+    After=network.target
 
-[Service]
-Type=simple
-User=root
-WorkingDirectory=/app
-ExecStart=/usr/bin/node server.js
-Restart=always
-RestartSec=10
-EnvironmentFile=/app/.env
+    [Service]
+    Type=simple
+    User=root
+    WorkingDirectory=/app
+    ExecStart=/usr/bin/node server.js
+    Restart=always
+    RestartSec=10
+    EnvironmentFile=/app/.env
 
-[Install]
-WantedBy=multi-user.target
+    [Install]
+    WantedBy=multi-user.target
     SVCEOF
 
     # Configure Nginx
     cat > /etc/nginx/sites-enabled/default << 'NGINXEOF'
-server {
-    listen 80;
-    server_name _;
+    server {
+        listen 80;
+        server_name _;
 
-    location /health {
-        proxy_pass http://localhost:3000/health;
+        location / {
+            proxy_pass http://localhost:3000;
+            proxy_http_version 1.1;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+        }
     }
-
-    location / {
-        proxy_pass http://localhost:3000;
-        proxy_http_version 1.1;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-    }
-}
     NGINXEOF
 
     # Start services
@@ -119,9 +114,11 @@ server {
     systemctl enable portfolio
     systemctl start portfolio
     systemctl restart nginx
+
+    echo "✅ Setup complete!"
   EOF
   )
-
+  
   tags = {
     Name = "${var.project_name}-${var.environment}-portfolio-launch-template"
   }
