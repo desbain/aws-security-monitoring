@@ -3,7 +3,7 @@ cat > ~/Downloads/aws-security-monitoring/README.md << 'EOF'
 # AWS DevSecOps Portfolio Project
 > **George Awa** | DevSecOps Engineer
 
-Live site: **https://desbain.com**
+
 
 A production-grade, cloud-native web application built entirely on AWS,
 demonstrating end-to-end DevSecOps skills including infrastructure design,
